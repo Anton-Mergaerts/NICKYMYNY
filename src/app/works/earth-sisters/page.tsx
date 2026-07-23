@@ -1,8 +1,11 @@
 import { CollectionIntro, CollectionFallback } from "@/components/artist-site";
+import { ArtworkArchiveEmbed } from "@/components/artwork-archive-embed";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 import earthSistersImg from "@/assets/earthsisters.png.asset.json";
 
-const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny";
+const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny/collection/earth-sisters-2024";
 
 export const metadata = pageMetadata({
   title: "Earth Sisters | Nicky Myny",
@@ -15,19 +18,22 @@ export const metadata = pageMetadata({
 export default function EarthSistersPage() {
   return (
     <section className="mx-auto max-w-[1600px] px-5 py-14 md:px-8 lg:px-12 lg:py-20">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Works", path: "/works" },
+          { name: "Earth Sisters", path: "/works/earth-sisters" },
+        ])}
+      />
       <CollectionIntro
         title="Earth Sisters"
         intro="A collection devoted to feminine presence — figures held in warm pigment, standing between portrait and atmosphere. Painting as a slow language for memory, inheritance, and relation."
         externalUrl={externalUrl}
       />
-      <div className="overflow-hidden">
-        <img
-          src={earthSistersImg.url}
-          alt="Earth Sisters collection by Nicky Myny"
-          className="w-full object-cover"
-          loading="eager"
-        />
-      </div>
+      <ArtworkArchiveEmbed
+        embedId="aa_embed_earth-sisters-2024"
+        scriptSrc="https://www.artworkarchive.com/profile/nicky-myny/collection/earth-sisters-2024/embed_js.js"
+      />
       <CollectionFallback url={externalUrl} />
     </section>
   );

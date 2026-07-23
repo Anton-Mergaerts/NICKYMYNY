@@ -9,6 +9,7 @@ import studioLandscapeAsset from "@/assets/about-studio-landscape.jpeg.asset.jso
 import cvAsset from "@/assets/nicky-myny-cv.pdf.asset.json";
 import lifeDialogueAsset from "@/assets/about-life-dialogue.jpg.asset.json";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
 import { JsonLd } from "@/lib/json-ld";
 
 const heroImage = about1Asset.url;
@@ -64,6 +65,12 @@ export default function AboutPage() {
   return (
     <>
       <JsonLd data={faqJsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about" },
+        ])}
+      />
       {/* HERO --------------------------------------------------------- */}
       <section className="border-b border-border/70 bg-surface">
         <div className="mx-auto grid max-w-[1600px] gap-0 lg:grid-cols-[1.05fr_0.95fr]">

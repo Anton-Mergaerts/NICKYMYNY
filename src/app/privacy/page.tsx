@@ -1,5 +1,7 @@
 import { MinimalPageIntro } from "@/components/artist-site";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 import { siteMeta } from "@/lib/site-data";
 
 export const metadata = pageMetadata({
@@ -12,6 +14,12 @@ export const metadata = pageMetadata({
 export default function PrivacyPage() {
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Privacy & Terms", path: "/privacy" },
+        ])}
+      />
       <MinimalPageIntro
         eyebrow="Privacy & Terms"
         title="Privacy & Terms"

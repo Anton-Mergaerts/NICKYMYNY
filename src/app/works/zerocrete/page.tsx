@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { CollectionIntro, CollectionFallback } from "@/components/artist-site";
+import { ArtworkArchiveEmbed } from "@/components/artwork-archive-embed";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 import { btn } from "@/lib/button";
 import zerocreteImg from "@/assets/zerocrete.png.asset.json";
 
-const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny";
+const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny/collection/zerocrete";
 
 export const metadata = pageMetadata({
   title: "Zerocrete | Nicky Myny",
@@ -17,19 +20,22 @@ export const metadata = pageMetadata({
 export default function ZerocretePage() {
   return (
     <section className="mx-auto max-w-[1600px] px-5 py-14 md:px-8 lg:px-12 lg:py-20">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Works", path: "/works" },
+          { name: "Zerocrete", path: "/works/zerocrete" },
+        ])}
+      />
       <CollectionIntro
         title="Zerocrete"
         intro="A material-based collaboration with Johan Coetsee, where painting entered dialogue with Zerocrete as surface, texture, and structure."
         externalUrl={externalUrl}
       />
-      <div className="overflow-hidden">
-        <img
-          src={zerocreteImg.url}
-          alt="Zerocrete collection by Nicky Myny"
-          className="w-full object-cover"
-          loading="eager"
-        />
-      </div>
+      <ArtworkArchiveEmbed
+        embedId="aa_embed_zerocrete"
+        scriptSrc="https://www.artworkarchive.com/profile/nicky-myny/collection/zerocrete/embed_js.js"
+      />
       <CollectionFallback url={externalUrl} />
       <div className="mt-10">
         <Link href="/collaborations/zerocrete" className={btn("outline")}>

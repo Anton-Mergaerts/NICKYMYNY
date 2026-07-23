@@ -5,6 +5,8 @@ import { TestimonialQuote } from "@/components/artist-site";
 import commissionExamplesAsset from "@/assets/commission-examples-row.png.asset.json";
 import commissionsHeroAsset from "@/assets/commissions-hero.png.asset.json";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 
 export const metadata = pageMetadata({
   title: "Commissions | Nicky Myny",
@@ -24,6 +26,12 @@ function SectionRule() {
 export default function CommissionsPage() {
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Commissions", path: "/commissions" },
+        ])}
+      />
       {/* HERO ------------------------------------------------------------- */}
       <section className="border-b border-border/70 bg-[hsl(38_35%_94%)]">
         <div className="mx-auto grid max-w-[1600px] grid-cols-1 lg:grid-cols-[2fr_3fr]">

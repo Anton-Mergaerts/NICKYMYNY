@@ -1,8 +1,11 @@
 import { CollectionIntro, CollectionFallback } from "@/components/artist-site";
+import { ArtworkArchiveEmbed } from "@/components/artwork-archive-embed";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 import rootingImg from "@/assets/rooting-in-remembrance-new.jpg.asset.json";
 
-const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny";
+const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny/collection/rooting-in-remembrance";
 
 export const metadata = pageMetadata({
   title: "Rooting in Remembrance | Nicky Myny",
@@ -15,19 +18,22 @@ export const metadata = pageMetadata({
 export default function RootingInRemembrancePage() {
   return (
     <section className="mx-auto max-w-[1600px] px-5 py-14 md:px-8 lg:px-12 lg:py-20">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Works", path: "/works" },
+          { name: "Rooting in Remembrance", path: "/works/Rootinginremembrance" },
+        ])}
+      />
       <CollectionIntro
         title="Rooting in Remembrance"
         intro="Paintings that hold memory and lineage — a slow return to what came before, translated through layered pigment and gesture."
         externalUrl={externalUrl}
       />
-      <div className="overflow-hidden">
-        <img
-          src={rootingImg.url}
-          alt="Rooting in Remembrance collection by Nicky Myny"
-          className="w-full object-cover"
-          loading="eager"
-        />
-      </div>
+      <ArtworkArchiveEmbed
+        embedId="aa_embed_rooting-in-remembrance"
+        scriptSrc="https://www.artworkarchive.com/profile/nicky-myny/collection/rooting-in-remembrance/embed_js.js"
+      />
       <CollectionFallback url={externalUrl} />
     </section>
   );

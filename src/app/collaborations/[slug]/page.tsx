@@ -8,8 +8,13 @@ import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
 import { JsonLd } from "@/lib/json-ld";
 import { CollaborationDetail } from "@/components/artist-site";
 
+// zerocrete, daftbynature, swartland, and roche have dedicated static pages
+// (richer content + a collection-specific Artwork Archive embed), so this
+// dynamic route only needs to serve the remaining slugs.
+const STATIC_SLUGS = new Set(["zerocrete", "daftbynature", "swartland", "roche"]);
+
 export function generateStaticParams() {
-  return collaborationProjects.map((p) => ({ slug: p.slug }));
+  return collaborationProjects.filter((p) => !STATIC_SLUGS.has(p.slug)).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({

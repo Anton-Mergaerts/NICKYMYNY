@@ -1,6 +1,8 @@
 import contactStudioImage from "@/assets/contact-studio.png.asset.json";
 import { InquiryForm, MinimalPageIntro, NewsletterPanel } from "@/components/artist-site";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 
 export const metadata = pageMetadata({
   title: "Inquire | Nicky Myny",
@@ -12,6 +14,12 @@ export const metadata = pageMetadata({
 export default function InquirePage() {
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Inquire", path: "/inquire" },
+        ])}
+      />
       <MinimalPageIntro
         eyebrow="Contact"
         title="Contact"

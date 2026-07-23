@@ -1,8 +1,11 @@
 import { CollectionIntro, CollectionFallback } from "@/components/artist-site";
+import { ArtworkArchiveEmbed } from "@/components/artwork-archive-embed";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/lib/json-ld";
 import whereWeStandImg from "@/assets/wherewestand.png.asset.json";
 
-const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny";
+const externalUrl = "https://www.artworkarchive.com/profile/nicky-myny/collection/where-we-stand";
 
 export const metadata = pageMetadata({
   title: "Where We Stand | Nicky Myny",
@@ -15,19 +18,22 @@ export const metadata = pageMetadata({
 export default function WhereWeStandPage() {
   return (
     <section className="mx-auto max-w-[1600px] px-5 py-14 md:px-8 lg:px-12 lg:py-20">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Works", path: "/works" },
+          { name: "Where We Stand", path: "/works/where-we-stand" },
+        ])}
+      />
       <CollectionIntro
         title="Where We Stand"
         intro="A body of work reflecting on rootedness and passage — paintings that hold ground between two landscapes and two homes."
         externalUrl={externalUrl}
       />
-      <div className="overflow-hidden">
-        <img
-          src={whereWeStandImg.url}
-          alt="Where We Stand collection by Nicky Myny"
-          className="w-full object-cover"
-          loading="eager"
-        />
-      </div>
+      <ArtworkArchiveEmbed
+        embedId="aa_embed_where-we-stand"
+        scriptSrc="https://www.artworkarchive.com/profile/nicky-myny/collection/where-we-stand/embed_js.js"
+      />
       <CollectionFallback url={externalUrl} />
     </section>
   );

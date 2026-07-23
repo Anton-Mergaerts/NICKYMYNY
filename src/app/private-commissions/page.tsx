@@ -2,7 +2,9 @@ import Link from "next/link";
 
 import { btn } from "@/lib/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/accordion";
+import { TestimonialQuote } from "@/components/artist-site";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
 import { JsonLd } from "@/lib/json-ld";
 import prevCommission1 from "@/assets/prev-commission-1.png.asset.json";
 import prevCommission2 from "@/assets/prev-commission-2.png.asset.json";
@@ -86,6 +88,12 @@ export default function PrivateCommissionPage() {
     <>
       <JsonLd data={serviceJsonLd} />
       <JsonLd data={faqJsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Private Commissions", path: "/private-commissions" },
+        ])}
+      />
       {/* HERO */}
       <section className="border-b border-border/70 bg-surface">
         <div className="mx-auto max-w-3xl px-5 py-24 text-center md:py-32">
@@ -197,13 +205,12 @@ export default function PrivateCommissionPage() {
               </div>
             ))}
           </div>
-          <div className="mt-16 text-center">
-            <Link
-              href="/testimonials"
-              className="text-[0.72rem] uppercase tracking-[0.22em] text-primary hover:underline"
-            >
-              Read collector reflections →
-            </Link>
+          <div className="mt-16">
+            <TestimonialQuote
+              quote="From the moment I wanted to enrich my home with a piece of art that meant more than aesthetic beauty, I knew Nicky would be my go-to person. The result became a beautiful and valuable work of art, and a lasting memory of freedom, peace, and openness."
+              credit="Charlotte Bonneux"
+              role="Private collector, Belgium"
+            />
           </div>
         </div>
       </section>

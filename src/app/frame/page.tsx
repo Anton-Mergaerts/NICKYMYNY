@@ -13,6 +13,7 @@ import {
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/accordion";
 import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/lib/breadcrumbs";
 import { JsonLd } from "@/lib/json-ld";
 import frameHero from "@/assets/frame-hero.png.asset.json";
 import frameProcess1 from "@/assets/frame-process-1.jpg.asset.json";
@@ -212,6 +213,12 @@ export default function FramePage() {
     >
       <JsonLd data={faqJsonLd} />
       <JsonLd data={serviceJsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "FRAME", path: "/frame" },
+        ])}
+      />
       {/* Hero */}
       <section className="border-b border-[color:rgba(58,50,43,0.1)]">
         <div className="mx-auto grid w-full max-w-[1600px] gap-10 px-5 py-16 md:px-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16 lg:px-12 lg:py-24">
