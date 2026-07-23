@@ -1,0 +1,147 @@
+---
+description: Power of Ten — ten verifiable rules for safety-critical and reliability-sensitive code (generalized from Holzmann/JPL)
+alwaysApply: false
+---
+
+# Power of Ten — Safety-Critical Coding
+
+Adapted from Gerard J. Holzmann, NASA/JPL (*The Power of Ten – Rules for Developing Safety Critical Code*). Language-agnostic. Target: code where correctness must be **mechanically checkable** — auth, payments, scheduling, firmware, infra, anything failure is costly.
+
+**Design goal:** small rule set developers remember; every rule enforceable by tools or review.
+
+---
+
+## 1. Simple control flow only
+
+- No unstructured jumps: `goto`, computed labels, `setjmp`/`longjmp`, exceptions used as normal control flow in tight logic.
+- **No direct or indirect recursion** unless statically bounded and explicitly justified. Acyclic call graphs help analyzers prove termination.
+- Early error returns are fine. Prefer flat, readable flow over clever branching.
+
+```typescript
+// ❌ unbounded recursion
+function walk(node: Node | null): number {
+  return node ? 1 + walk(node.next) : 0;
+}
+
+// ✅ bounded iteration
+function walk(head: Node | null, maxNodes: number): number {
+  let count = 0;
+  let node = head;
+  while (node && count < maxNodes) {
+    count++;
+    node = node.next;
+  }
+  if (node) throw new BoundedTraversalError(maxNodes);
+  return count;
+}
+```
+
+---
+
+## 2. Bounded iteration
+
+- Every **terminating** loop must have a **statically provable** upper bound on iterations.
+- Intentionally non-terminating loops (schedulers, event pumps): prove they **cannot** terminate.
+- Variable-length traversal: add explicit max; on exceed → fail safe (error, abort, degrade).
+
+---
+
+## 3. Fixed resource budget after initialization
+
+- No runtime heap growth, unbounded allocations, or GC pressure in critical paths after init.
+- Pre-size buffers, pools, queues, caches at startup or first use with known caps.
+- Without recursion (Rule 1), stack depth is statically bounded — keep it that way.
+
+Applies to: `malloc`/`new`, dynamic arrays that grow without cap, unbounded async task spawning, connection pools without limits.
+
+---
+
+## 4. Small functions (~60 lines)
+
+- One logical unit per function. Rough ceiling: one screen, or one printed page at one statement/declaration per line (~60 LOC).
+- Split when the unit is hard to understand, test, or verify as a whole.
+
+---
+
+## 5. High invariant density
+
+- Target **≥2 runtime checks per function** on average: preconditions, postconditions, parameter guards, loop invariants.
+- Checks must be **side-effect free**. On failure → explicit recovery (return error, enter safe state, propagate).
+- No vacuous checks. No checks a static analyzer can prove always true/false.
+
+```typescript
+// ❌ vacuous
+if (true) { /* ... */ }
+
+// ✅ meaningful guard + recovery
+if (amount < 0 || amount > MAX_AMOUNT) {
+  return Result.err(INVALID_AMOUNT);
+}
+```
+
+---
+
+## 6. Minimal scope
+
+- Declare/bind data at the **smallest** enclosing scope.
+- Do not reuse one variable for incompatible purposes — narrows fault diagnosis.
+
+---
+
+## 7. Validate inputs; handle outputs
+
+- Check **every non-trivial** return value and error channel at the call site.
+- Validate parameters at function entry.
+- Explicit ignore only when success and failure demand **identical** response — document why (`void` cast equivalent + comment).
+- Default: propagate errors up the call chain.
+
+```typescript
+// ❌ silent failure
+await fs.writeFile(path, data);
+
+// ✅ checked
+const result = await fs.writeFile(path, data);
+if (result.isErr()) return result;
+```
+
+---
+
+## 8. Limit metaprogramming and conditional compilation
+
+- Restrict preprocessor/macros, code generation, template meta-programming, heavy reflection to **includes, constants, and trivial helpers**.
+- Ban: token pasting, variadic macro tricks, recursive macro expansion, macros that expand to partial syntax.
+- Conditional compilation (`#ifdef`, feature flags, env branches): **rare**, tool-flagged, justified in code. *N* independent flags → up to 2^N variants to test.
+
+In TS/JS: limit `any`, unchecked `as`, `eval`, dynamic `import()` in critical paths — they defeat static analysis like C preprocessor abuse.
+
+---
+
+## 9. Limit indirection
+
+- At most **one level** of pointer/reference indirection in a given access path unless strongly justified.
+- No hidden dereference inside macros, type aliases, or opaque wrappers that obscure data flow.
+- Avoid function pointers, dynamic dispatch tables, and callback registries where static analysis cannot follow control flow. If required, provide alternate hooks for analyzers (explicit switch/table, documented call graph).
+
+Maps to: raw pointers (C), `void*`, unchecked casts, `Function` type, plugin registries without static registration.
+
+---
+
+## 10. Zero warnings; daily static analysis
+
+- Enable strictest compiler/linter/typechecker settings **from day one**. **Zero warnings** policy — no exceptions.
+- If a tool warns, **simplify the code** until the warning clears. Do not assume false positives.
+- Run state-of-the-art static analyzers in CI daily. Pass with zero findings.
+
+| Stack | Examples |
+|-------|----------|
+| TypeScript | `strict`, `noUncheckedIndexedAccess`, ESLint strict, tsc `--noEmit` |
+| Java | `-Werror`, SpotBugs, Error Prone |
+| C/C++ | `-Wall -Wextra -Werror`, Coverity, Clang Static Analyzer |
+
+---
+
+## When to apply
+
+Use for: safety-critical modules, financial/auth flows, concurrency primitives, parsers on untrusted input, anything a bug can hurt users or lose data.
+
+Not every file needs all ten. When a rule is waived, **justify in code** and flag for review — waivers should be rare, not the default.
